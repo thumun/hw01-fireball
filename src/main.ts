@@ -1,5 +1,5 @@
 import {vec3, vec4} from 'gl-matrix';
-const Stats = require('stats-js');
+//const Stats = require('stats-js');
 import * as DAT from 'dat.gui';
 import Icosphere from './geometry/Icosphere';
 import Square from './geometry/Square';
@@ -42,12 +42,12 @@ function loadScene() {
 
 function main() {
   // Initial display for framerate
-  const stats = Stats();
-  stats.setMode(0);
-  stats.domElement.style.position = 'absolute';
-  stats.domElement.style.left = '0px';
-  stats.domElement.style.top = '0px';
-  document.body.appendChild(stats.domElement);
+  //const stats = Stats();
+  //stats.setMode(0);
+  //stats.domElement.style.position = 'absolute';
+  //stats.domElement.style.left = '0px';
+  //stats.domElement.style.top = '0px';
+  //document.body.appendChild(stats.domElement);
 
   var testObj = new test();
   var colortest = vec4.fromValues(0, 0, 0, 1);
@@ -96,7 +96,7 @@ function main() {
   function tick() {
     deltaTime += 0.01;
     camera.update();
-    stats.begin();
+    //stats.begin();
     gl.viewport(0, 0, window.innerWidth, window.innerHeight);
     renderer.clear();
     if(controls.tesselations != prevTesselations)
@@ -107,11 +107,11 @@ function main() {
     }
 
     renderer.render(camera, noise, colortest, deltaTime, true, 100, [
-      cube
-      //icosphere,
+      //cube
+      icosphere,
       //square,
     ]);
-    stats.end();
+    //stats.end();
 
     // Tell the browser to call `tick` again whenever it renders a new frame
     requestAnimationFrame(tick);
