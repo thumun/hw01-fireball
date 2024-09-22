@@ -91,6 +91,10 @@ function main() {
     new Shader(gl.FRAGMENT_SHADER, require('./shaders/noise-frag.glsl')),
   ]);
   
+  const fire = new ShaderProgram([
+    new Shader(gl.VERTEX_SHADER, require('./shaders/fire-vert.glsl')),
+    new Shader(gl.FRAGMENT_SHADER, require('./shaders/fire-frag.glsl')),
+  ]);
 
   // This function will be called every frame
   function tick() {
@@ -106,7 +110,7 @@ function main() {
       icosphere.create();
     }
 
-    renderer.render(camera, noise, colortest, deltaTime, true, 100, [
+    renderer.render(camera, fire, colortest, deltaTime, true, 100, [
       //cube
       icosphere,
       //square,
