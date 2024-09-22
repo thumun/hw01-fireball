@@ -46,55 +46,27 @@ void main()
                                                             // perpendicular to the surface after the surface is transformed by
                                                             // the model matrix.
 
-    vec4 pos = vs_Pos; 
+    vec4 modelposition = u_Model * vs_Pos;   // Temporarily store the transformed vertex positions for use below
 
-    // calc radius from center of sphere
+    vec4 pos = modelposition; 
 
-    //vec4 pos = vs_Pos + 0.1 * sin(3.14 * u_DeltaTime + vs_Pos.y); // moving the verticies based on sin & time
-    
-    float rad = length(pos.xyz);
-    //pos[0] += rad;
-    //pos[1] += rad;
-    pos[2] += 0.3f * sin(0.3f * rad + u_DeltaTime);
-
-    pos = pos + fs_Nor * pos;
-
-    //vec4 test = fs_Nor * noiseVal;
-
-    //float dotProd = dot(vec3(0.f, 0.f, 1.f), fs_Nor.xyz);
-    //pos[0] += dotProd;
-    //pos[1] += dotProd;
-    //pos[2] += dotProd;
-
-/*
     vec3 flame = vec3(0.f, 0.f, 1.f);
     float dotProd = dot(flame, fs_Nor.xyz);
 
     if (dotProd > 0.f){
-        float noiseVal = 5.0 * sin(2.0 * rad + u_DeltaTime);
-        pos += vec4(noiseVal*dotProd*flame, pos[3])/*vec4(sinusodialNoise(pos.xyz, 0.5f, 0.2f), pos[3])*/;
-    //}
+        pos = vec4(pos.x, pos.y, -0.2f * sin(u_DeltaTime*20.0f * pos.z*dotProd) + clamp(pos.z*sin(u_DeltaTime * dotProd), 0.f, 1.0f), pos[3]);
 
-/*
-    if (vs_Pos[2] > 0.f) {
-        vec3 noiseOut = sinusodialNoise(vec3(vs_Pos[0], vs_Pos[1], vs_Pos[2]), 0.5f, 0.2f);
-        pos = vec4(noiseOut[0], noiseOut[1], noiseOut[2], vs_Pos[3]);
+        //float noiseVal = 2.0 * sin(0.4 * u_DeltaTime);
+        //pos = vec4(pos.xyz*dotProd, pos[3]);
+        //pos += vec4(noiseVal*flame, pos[3])/*vec4(sinusodialNoise(pos.xyz, 0.5f, 0.2f), pos[3])*/;
     }
-    else 
-    {
-        vec3 noiseOut = sinusodialNoise(vs_Pos.xyz, 0.5f, 0.2f);
-        pos = vec4(noiseOut.x, noiseOut.y, noiseOut.z, vs_Pos.w);
-    }
-    */
 
-    //vec3 noiseOut = sinusodialNoise(vec3(vs_Pos[0], vs_Pos[1], vs_Pos[2]), 1.0f, 1.0f);
-    //vec4 pos = vec4(noiseOut[0], noiseOut[1], noiseOut[2], vs_Pos[3]);
 
-    vec4 modelposition = u_Model * pos;   // Temporarily store the transformed vertex positions for use below
+    fs_LightVec = lightPos - pos;  // Compute the direction in which the light source lies
 
-    fs_LightVec = lightPos - modelposition;  // Compute the direction in which the light source lies
-
-    gl_Position = u_ViewProj * modelposition;// gl_Position is a built-in variable of OpenGL which is
+    gl_Position = u_ViewProj * pos;// gl_Position is a built-in variable of OpenGL which is
                                              // used to render the final positions of the geometry's vertices
-    fs_Pos = gl_Position;
+                                             
+
+   fs_Pos = gl_Position;
 }
