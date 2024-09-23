@@ -81,7 +81,7 @@ void main()
                                                             //lit by our point light are not completely black.
 
         //float dist = computeWorleyNoise(vec3(fs_Pos[0], fs_Pos[1], fs_Pos[2])); // adjusts the color to create noise effect 
-        float dist = fbm(fs_Pos.xyz, 8) * clamp(sin(u_DeltaTime), 0.f, 1.f);
+        float dist = fbm(fs_Pos.xyz, 8) /** clamp(sin(u_DeltaTime), 0.f, 1.f)*/;
 
         //vec3 color = diffuseColor.rgb * lightIntensity; 
 

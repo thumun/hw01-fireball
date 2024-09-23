@@ -81,6 +81,24 @@ vec3 sinusodialNoise(vec3 pos, float amp, float freq)
                     amp * sin(3.14 * freq * u_DeltaTime + pos.z));
 }
 
+// toolbox funcs from lec slides!
+/*
+float bias(float b, float t){
+    return pow(t, log(b) / log(0.5f));
+}
+
+float gain (float g, float t){
+    if (t < 0.5f){
+        return bias(1.0f-g, 2*t) / 2.0f; 
+    }
+    else {
+        return 1.0f - bias(1.0f-g, 2.0f - 2.0f*t);
+    }
+}
+*/
+
+// need to add 3 more 
+
 void main()
 {
     fs_Col = vs_Col;                         // Pass the vertex colors to the fragment shader for interpolation
@@ -100,7 +118,7 @@ void main()
 
     //pos = vec4(pos[0], yVal, pos[1], pos[3]);
 
-
+/*
     vec3 flame = vec3(0.f, 0.f, 1.f);
     float dotProd = dot(flame, fs_Nor.xyz);
 
@@ -116,7 +134,26 @@ void main()
         //float noiseVal = 2.0 * sin(0.4 * u_DeltaTime);
         //pos = vec4(pos.xyz*dotProd, pos[3]);
         //pos += vec4(noiseVal*flame, pos[3])/*vec4(sinusodialNoise(pos.xyz, 0.5f, 0.2f), pos[3])*/;
+    //}*/
+    
+
+    // initial deform w/ sinusodial: 
+
+
+
+    float lowfrqnoise = 2.0 * sin(0.4 * u_DeltaTime) + 1.0f;
+    int test = int(round(lowfrqnoise * 10.0f));
+    float fbmVal = fbm(pos.xyz, 8); // how to change the freq of this? 
+
+    if (pos.z > 0.f)
+    {
+
+        pos[2] = pos[2] * fbmVal * 3.0f; 
+    } 
+    else {
+        //pos[2] = pos[2] * fbm(pos.xyz, 1);
     }
+
 
     vec4 modelposition = u_Model * pos;   // Temporarily store the transformed vertex positions for use below
 
