@@ -26,8 +26,6 @@ out vec4 fs_LightVec;       // The direction in which our virtual light lies, re
 out vec4 fs_Col;            // The color of each vertex. This is implicitly passed to the fragment shader.
 out vec4 fs_Pos;
 
-out float offset; 
-
 const vec4 lightPos = vec4(5, 5, 3, 1); //The position of our virtual light, which is used to compute the shading of
                                         //the geometry in the fragment shader.
 
@@ -101,7 +99,6 @@ float gain (float g, float t){
 }
 */
 
-// need to add 3 more 
 
 void main()
 {
@@ -115,60 +112,7 @@ void main()
                                                             // the model matrix.
 
     vec4 pos = vs_Pos; 
-
-    //float xVal = fs_Nor.x * 5.0f * sin(u_DeltaTime*0.1f*pos.x);
-    //float yVal = fs_Nor.y * 5.0f * cos(u_DeltaTime*0.2f*pos.y);
-    //float zVal = fs_Nor.z * 5.0f * sin(u_DeltaTime*0.1f*pos.z);
-
-    //pos = vec4(pos[0], yVal, pos[1], pos[3]);
-
-/*
-    vec3 flame = vec3(0.f, 0.f, 1.f);
-    float dotProd = dot(flame, fs_Nor.xyz);
-
-    float fbmVal = fbm(pos.xyz, 5);
-
-    if (dotProd > 0.f){
-        //pos = vec4(pos.x, pos.y, -0.2f * sin(u_DeltaTime*20.0f * pos.z*dotProd) + clamp(pos.z*sin(u_DeltaTime * dotProd), 0.f, 1.0f), pos[3]);
-
-        float offset = pos.z + fbmVal;
-        pos = vec4(pos.x, pos.y, -0.2f * sin(u_DeltaTime*20.0f * fbmVal) + clamp(offset*sin(u_DeltaTime * dotProd), 0.f, 1.0f), pos[3]);
-
-
-        //float noiseVal = 2.0 * sin(0.4 * u_DeltaTime);
-        //pos = vec4(pos.xyz*dotProd, pos[3]);
-        //pos += vec4(noiseVal*flame, pos[3])/*vec4(sinusodialNoise(pos.xyz, 0.5f, 0.2f), pos[3])*/;
-    //}*/
     
-
-    // initial deform w/ sinusodial: 
-
-    // debugging --> just try frequency 
-    // then try playing with the frequency and see whwat happens 
-    // then doubble check the implementation 
-
-    // fbm check the implementation -- if between 0,1 or -1,1
-    // add vals for freq and amplitude 
-    // in order to animate, scale for every point what input is --> add to component pos some small amount 
-
-    vec3 lowfrqnoise = 2.0 * sin(0.4 * pos.xyz + u_DeltaTime) + 1.0f;
-
-    float fbmVal = fbm(pos.xyz, u_Octaves); // how to change the freq of this? 
-
-    pos = pos + fs_Nor * fbmVal/7.0f;
-
-    // only affects the top of the sphere --> so flames concentrated on top 
-    if (pos.z > 0.f)
-    {
-        // to make the long flames
-        pos[2] = pos[2] * fbmVal * 3.0f; 
-        // adding a slight bit of movement -> borrowed from last homework 
-        pos[0] = pos[0] + 0.1 * sin(3.14 * u_DeltaTime + pos[0]); // moving the verticies based on sin & time
-
-    } 
-
-    offset = fbmVal;
-
     vec4 modelposition = u_Model * pos;   // Temporarily store the transformed vertex positions for use below
 
     fs_LightVec = lightPos - modelposition;  // Compute the direction in which the light source lies

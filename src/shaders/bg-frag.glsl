@@ -9,16 +9,14 @@ uniform vec4 u_Color2; // The color with which to render this instance of geomet
 //uniform int u_RandomPointsSize; 
 
 uniform float u_DeltaTime; 
-uniform int u_Octaves; 
+//uniform int u_Octaves; 
 
 // These are the interpolated values out of the rasterizer, so you can't know
 // their specific values without knowing the vertices that contributed to them
-in vec4 fs_Pos;
-in vec4 fs_Nor;
-in vec4 fs_LightVec;
-in vec4 fs_Col;
-in float offset; 
-
+//in vec4 fs_Pos;
+//in vec4 fs_Nor;
+//in vec4 fs_LightVec;
+//in vec4 fs_Col;
 
 out vec4 out_Col; // This is the final output color that you will see on your
                   // screen for the pixel that is currently being processed.
@@ -70,12 +68,30 @@ float fbm(vec3 x, int octaves) {
 	return v;
 }
 
+float ease_in_quadratic(float t)
+{
+    return t * t; 
+}
+
+float ease_in_out_quadratic(float t){
+    return 1 - ease_in_quadratic(1 - t);
+}
+
+float ease_in_out_quadratic(float t)
+{
+    if (t < 0.5)
+    {
+        return ease_in_quadratic(1.0f - t);
+    }
+    else {
+        return 1 - ease_in_quadratic((1.0f - t) * 2.0f / 2.0f);
+    }
+}
+
 void main()
 {
     // Material base color (before shading)
-        vec4 outColor = u_Color;
-        vec4 centerColor = u_Color2;
-
+        vec4 diffuseColor = u_Color;
 
         // Calculate the diffuse term for Lambert shading
         //float diffuseTerm = dot(normalize(fs_Nor), normalize(fs_LightVec));
@@ -98,26 +114,21 @@ void main()
         //float zdist = length(fs_Pos.xyz);
         //vec3 newColor = (1.0f-zdist)*diffuseColor.rgb + zdist*vec3(1.f, 1.f, 1.f);
 
-        vec3 newColor = vec3(0.f, 0.f, 0.f);
+        //vec4 newColor = vec4(diffuseColor.rgb * dist, 0.3f);
 
-        float dist = length(fs_Pos.z);
-        /*
-        if(dist <= 1.0f)
+        float noiseVal = fbm(fs_Pos.xyz, 8);
+        float clampNoise = clamp(noiseVal, 0.0f, 1.0f);
+
+        vec3 newColor = vec3(1.0f, 1.0f, 1.0f);
+
+        if (clampNoise > 0.3f)
         {
-            newColor = vec3(1.0f, 1.0f, 1.0f);
-        }
-        */
+            newColor = vec3(0.0f, 0.0f, 0.0f);
+        } 
 
-        float normalizedDistance = clamp(fs_Pos.y, 0.0, 1.0);
-        newColor = (1.0f-fs_Pos.z)*outColor.rgb + fs_Pos.z*centerColor.rgb;
+        out_Col = vec4(newColor, diffuseColor.a);
 
-
-        // Interpolate between centerColor and edgeColor based on normalizedDistance
-        vec3 color = mix(outColor.rgb, centerColor.rgb, normalizedDistance);
-
-        //out_Col = vec4(diffuseColor.rgb * dist, diffuseColor.a);
-
-        out_Col = vec4(newColor.xyz, outColor.a);
+        //out_Col = vec4(newColor, diffuseColor.a);
 
 
 

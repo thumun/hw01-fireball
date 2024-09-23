@@ -16,8 +16,8 @@ const controls = {
   octaves: 8,
   'Load Scene': loadScene, // A function pointer, essentially
   'Reset Scene': resetScene,
-  color : [0, 0, 0, 1.0],
-  color2 : [0, 0, 0, 1.0],
+  color : [6.0, 6.0, 23.0, 1.0],
+  color2 : [165.0, 48.0, 48.0, 1.0],
 };
 
 /*
@@ -34,7 +34,11 @@ let deltaTime: number = 0.0;
 let icosphere: Icosphere;
 let square: Square;
 let cube: Cube;
+
 let prevTesselations: number = 5;
+let prevOctaves: number = 8;
+let prevColor: number[] = [6.0, 6.0, 23.0, 1.0];
+let prevColor2: number[] = [165.0, 48.0, 48.0, 1.0];
 
 function loadScene() {
   icosphere = new Icosphere(vec3.fromValues(0, 0, 0), 1, controls.tesselations);
@@ -48,8 +52,8 @@ function loadScene() {
 function resetScene(){
   controls.tesselations = 5; 
   controls.octaves = 8;
-  controls.color = [0, 0, 0, 1.0];
-  controls.color2 = [1.0, 1.0, 1.0, 1.0];
+  controls.color = [6.0, 6.0, 23.0, 1.0];
+  controls.color2 = [165.0, 48.0, 48.0, 1.0];
 }
 
 function main() {
@@ -114,6 +118,11 @@ function main() {
     new Shader(gl.FRAGMENT_SHADER, require('./shaders/fire-frag.glsl')),
   ]);
 
+  const bg = new ShaderProgram([
+    new Shader(gl.VERTEX_SHADER, require('./shaders/fire-vert.glsl')),
+    new Shader(gl.FRAGMENT_SHADER, require('./shaders/fire-frag.glsl')),
+  ]);
+
   // This function will be called every frame
   function tick() {
     deltaTime += 0.01;
@@ -128,11 +137,32 @@ function main() {
       icosphere.create();
     }
 
+    if(controls.octaves != prevOctaves)
+    {
+      prevOctaves = controls.octaves;
+    }
+
+    if(controls.color != prevColor)
+    {
+      prevColor = controls.color;
+    }
+
+    if(controls.color2 != prevColor2)
+    {
+      prevColor2 = controls.color2;
+    }
+
+    renderer.render(camera, bg, 0, [], [], 0, [
+      //icosphere,
+      square
+      ]);
+
     renderer.render(camera, fire, controls.octaves, controls.color, controls.color2, deltaTime,[
       //cube
       icosphere,
       //square,
     ]);
+
     //stats.end();
 
     // Tell the browser to call `tick` again whenever it renders a new frame
