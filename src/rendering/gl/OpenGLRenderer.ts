@@ -46,7 +46,7 @@ class OpenGLRenderer {
     prog.setGeometryColor(color);
     prog.setGeometryColor2(color2);
     prog.setTime(time);
-
+    prog.setOctaves(octaves);
     /*
     if(isNoise){
       prog.setRandomPoints(pointNum);

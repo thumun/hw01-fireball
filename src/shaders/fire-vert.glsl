@@ -13,6 +13,7 @@ uniform mat4 u_ViewProj;    // The matrix that defines the camera's transformati
                             // but in HW3 you'll have to generate one yourself
 
 uniform float u_DeltaTime; 
+uniform int u_Octaves; 
 
 in vec4 vs_Pos;             // The array of vertex positions passed to the shader
 
@@ -150,20 +151,19 @@ void main()
 
     vec3 lowfrqnoise = 2.0 * sin(0.4 * pos.xyz + u_DeltaTime) + 1.0f;
 
-    float fbmVal = fbm(pos.xyz, 8); // how to change the freq of this? 
+    float fbmVal = fbm(pos.xyz, u_Octaves); // how to change the freq of this? 
 
     pos = pos + fs_Nor * fbmVal/7.0f;
 
-
+    // only affects the top of the sphere --> so flames concentrated on top 
     if (pos.z > 0.f)
     {
-
+        // to make the long flames
         pos[2] = pos[2] * fbmVal * 3.0f; 
-    } 
-    else {
-        //pos[2] = pos[2] * fbm(pos.xyz, 1);
-    }
+        // adding a slight bit of movement -> borrowed from last homework 
+        pos[0] = pos[0] + 0.1 * sin(3.14 * u_DeltaTime + pos[0]); // moving the verticies based on sin & time
 
+    } 
 
     vec4 modelposition = u_Model * pos;   // Temporarily store the transformed vertex positions for use below
 

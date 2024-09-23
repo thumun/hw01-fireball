@@ -9,6 +9,7 @@ uniform vec4 u_Color2; // The color with which to render this instance of geomet
 //uniform int u_RandomPointsSize; 
 
 uniform float u_DeltaTime; 
+uniform int u_Octaves; 
 
 // These are the interpolated values out of the rasterizer, so you can't know
 // their specific values without knowing the vertices that contributed to them
@@ -90,8 +91,11 @@ void main()
 
         // Compute final shaded color
 
-        float zdist = length(fs_Pos.xyz);
-        vec3 newColor = (1.0f-zdist)*diffuseColor.rgb + zdist*vec3(1.f, 1.f, 1.f);
+        //float zdist = length(fs_Pos.xyz);
+        //vec3 newColor = (1.0f-zdist)*diffuseColor.rgb + zdist*vec3(1.f, 1.f, 1.f);
+
+        vec4 newColor = vec4(diffuseColor.rgb * dist, 0.3f);
+
 
         out_Col = vec4(diffuseColor.rgb * dist, diffuseColor.a);
 
