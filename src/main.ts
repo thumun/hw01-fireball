@@ -13,16 +13,21 @@ import ShaderProgram, {Shader} from './rendering/gl/ShaderProgram';
 // This will be referred to by dat.GUI's functions that add GUI elements.
 const controls = {
   tesselations: 5,
+  octaves: 8,
   'Load Scene': loadScene, // A function pointer, essentially
-  //'Add Color': [0, 0, 0, 1.0],
+  'Reset Scene': resetScene,
+  color : [0, 0, 0, 1.0],
+  color2 : [0, 0, 0, 1.0],
 };
 
+/*
 class test {
   color: vec4 
   constructor(){
     this.color = [1, 1, 1, 1.0]
   }
 };
+*/
 
 let deltaTime: number = 0.0; 
 
@@ -40,6 +45,13 @@ function loadScene() {
   cube.create();
 }
 
+function resetScene(){
+  controls.tesselations = 5; 
+  controls.octaves = 8;
+  controls.color = [0, 0, 0, 1.0];
+  controls.color2 = [1.0, 1.0, 1.0, 1.0];
+}
+
 function main() {
   // Initial display for framerate
   //const stats = Stats();
@@ -49,18 +61,24 @@ function main() {
   //stats.domElement.style.top = '0px';
   //document.body.appendChild(stats.domElement);
 
-  var testObj = new test();
-  var colortest = vec4.fromValues(0, 0, 0, 1);
+  //var testObj = new test();
+  //var colortest = vec4.fromValues(1, 0, 0, 1);
 
   // Add controls to the gui
   const gui = new DAT.GUI();
   gui.add(controls, 'tesselations', 0, 8).step(1);
   gui.add(controls, 'Load Scene');
-  const colorFolder = gui.addFolder("Color");
-  const color = colorFolder.addColor(testObj, 'color');
-  color.onChange((value) => {colortest = [value[0]/255.0, value[1]/255.0, value[2]/255.0, 1]});
 
-  console.log(testObj.color);
+  gui.add(controls, 'Reset Scene');
+  gui.add(controls, 'octaves');
+  gui.addColor(controls, 'color');
+  gui.addColor(controls, 'color2');
+
+  //const colorFolder = gui.addFolder("Color");
+  //const color = colorFolder.addColor(testObj, 'color');
+  //color.onChange((value) => {colortest = [value[0]/255.0, value[1]/255.0, value[2]/255.0, 1]});
+
+  //console.log(testObj.color);
 
   // get canvas and webgl context
   const canvas = <HTMLCanvasElement> document.getElementById('canvas');
@@ -110,7 +128,7 @@ function main() {
       icosphere.create();
     }
 
-    renderer.render(camera, fire, colortest, deltaTime, true, 100, [
+    renderer.render(camera, fire, controls.octaves, controls.color, controls.color2, deltaTime,[
       //cube
       icosphere,
       //square,

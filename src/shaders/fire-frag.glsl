@@ -3,6 +3,8 @@
 precision highp float;
 
 uniform vec4 u_Color; // The color with which to render this instance of geometry.
+uniform vec4 u_Color2; // The color with which to render this instance of geometry.
+
 //uniform vec3 u_RandomPoints[200];
 //uniform int u_RandomPointsSize; 
 
@@ -40,6 +42,7 @@ float computeWorleyNoise(vec3 currPos)
             for (int x = -1; x <= 1; x++){
                 vec3 neighbor = vec3(float(x), float(y), float(z)); // dir of neighbor 
                 vec3 point = random(posInt + neighbor); // gets voronoi point in neighboring cell 
+                point = 0.5 + 0.5*sin(u_DeltaTime + 6.2831*point);
                 vec3 diff = neighbor + point - posFract; // gets distance of point and currPos
                 float dist = length(diff); 
                 minDist = min(minDist, dist); // updates min if new min reached 
@@ -86,5 +89,14 @@ void main()
         //vec3 color = diffuseColor.rgb * lightIntensity; 
 
         // Compute final shaded color
+
+        float zdist = length(fs_Pos.xyz);
+        vec3 newColor = (1.0f-zdist)*diffuseColor.rgb + zdist*vec3(1.f, 1.f, 1.f);
+
         out_Col = vec4(diffuseColor.rgb * dist, diffuseColor.a);
+
+        //out_Col = vec4(newColor, diffuseColor.a);
+
+
+
 }

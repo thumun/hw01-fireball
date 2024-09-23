@@ -50,6 +50,7 @@ float computeWorleyNoise(vec3 currPos)
             for (int x = -1; x <= 1; x++){
                 vec3 neighbor = vec3(float(x), float(y), float(z)); // dir of neighbor 
                 vec3 point = random(posInt + neighbor); // gets voronoi point in neighboring cell 
+                point = 0.5 + 0.5*sin(u_DeltaTime + 6.2831*point);
                 vec3 diff = neighbor + point - posFract; // gets distance of point and currPos
                 float dist = length(diff); 
                 minDist = min(minDist, dist); // updates min if new min reached 
@@ -139,11 +140,20 @@ void main()
 
     // initial deform w/ sinusodial: 
 
+    // debugging --> just try frequency 
+    // then try playing with the frequency and see whwat happens 
+    // then doubble check the implementation 
 
+    // fbm check the implementation -- if between 0,1 or -1,1
+    // add vals for freq and amplitude 
+    // in order to animate, scale for every point what input is --> add to component pos some small amount 
 
-    float lowfrqnoise = 2.0 * sin(0.4 * u_DeltaTime) + 1.0f;
-    int test = int(round(lowfrqnoise * 10.0f));
+    vec3 lowfrqnoise = 2.0 * sin(0.4 * pos.xyz + u_DeltaTime) + 1.0f;
+
     float fbmVal = fbm(pos.xyz, 8); // how to change the freq of this? 
+
+    pos = pos + fs_Nor * fbmVal/7.0f;
+
 
     if (pos.z > 0.f)
     {
