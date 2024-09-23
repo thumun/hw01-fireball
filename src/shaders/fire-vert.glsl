@@ -28,6 +28,52 @@ out vec4 fs_Pos;
 const vec4 lightPos = vec4(5, 5, 3, 1); //The position of our virtual light, which is used to compute the shading of
                                         //the geometry in the fragment shader.
 
+// got the values from here https://lygia.xyz/generative/srandom and 4600 slides 
+vec3 random(vec3 p) {
+    p = (vec3(dot(p, vec3(127.1, 311.7,70.0)),
+                 dot(p, vec3(269.5,183.3,250.0)),
+                 dot(p, vec3(100.5,270.3,120.0))));
+
+    return fract(sin(p)*43758.5453);
+}
+
+// used 4600 lec slides as ref 
+// and used this: https://www.youtube.com/watch?v=4066MndcyCk 
+float computeWorleyNoise(vec3 currPos)
+{
+    vec3 posInt = floor(currPos);
+    vec3 posFract = fract(currPos); 
+    float minDist = 1.0f; // max val
+    
+    for (int z = -1; z <= 1; z++){
+        for (int y = -1; y <= 1; y++){
+            for (int x = -1; x <= 1; x++){
+                vec3 neighbor = vec3(float(x), float(y), float(z)); // dir of neighbor 
+                vec3 point = random(posInt + neighbor); // gets voronoi point in neighboring cell 
+                vec3 diff = neighbor + point - posFract; // gets distance of point and currPos
+                float dist = length(diff); 
+                minDist = min(minDist, dist); // updates min if new min reached 
+            }
+        } 
+    }
+
+    return minDist; 
+}
+
+// borrowed code!
+// https://gist.github.com/patriciogonzalezvivo/670c22f3966e662d2f83
+float fbm(vec3 x, int octaves) {
+	float v = 0.0f;
+	float a = 0.5f;
+	vec3 shift = vec3(100);
+	for (int i = 0; i < octaves; ++i) {
+		v += a * computeWorleyNoise(x);
+		x = x * 2.0 + shift;
+		a *= 0.5;
+	}
+	return v;
+}
+
 vec3 sinusodialNoise(vec3 pos, float amp, float freq)
 {
     return pos + vec3(amp * sin(3.14 * freq * u_DeltaTime + pos.x), 
@@ -46,25 +92,37 @@ void main()
                                                             // perpendicular to the surface after the surface is transformed by
                                                             // the model matrix.
 
-    vec4 modelposition = u_Model * vs_Pos;   // Temporarily store the transformed vertex positions for use below
+    vec4 pos = vs_Pos; 
 
-    vec4 pos = modelposition; 
+    //float xVal = fs_Nor.x * 5.0f * sin(u_DeltaTime*0.1f*pos.x);
+    //float yVal = fs_Nor.y * 5.0f * cos(u_DeltaTime*0.2f*pos.y);
+    //float zVal = fs_Nor.z * 5.0f * sin(u_DeltaTime*0.1f*pos.z);
+
+    //pos = vec4(pos[0], yVal, pos[1], pos[3]);
+
 
     vec3 flame = vec3(0.f, 0.f, 1.f);
     float dotProd = dot(flame, fs_Nor.xyz);
 
+    float fbmVal = fbm(pos.xyz, 5);
+
     if (dotProd > 0.f){
-        pos = vec4(pos.x, pos.y, -0.2f * sin(u_DeltaTime*20.0f * pos.z*dotProd) + clamp(pos.z*sin(u_DeltaTime * dotProd), 0.f, 1.0f), pos[3]);
+        //pos = vec4(pos.x, pos.y, -0.2f * sin(u_DeltaTime*20.0f * pos.z*dotProd) + clamp(pos.z*sin(u_DeltaTime * dotProd), 0.f, 1.0f), pos[3]);
+
+        float offset = pos.z + fbmVal;
+        pos = vec4(pos.x, pos.y, -0.2f * sin(u_DeltaTime*20.0f * fbmVal) + clamp(offset*sin(u_DeltaTime * dotProd), 0.f, 1.0f), pos[3]);
+
 
         //float noiseVal = 2.0 * sin(0.4 * u_DeltaTime);
         //pos = vec4(pos.xyz*dotProd, pos[3]);
         //pos += vec4(noiseVal*flame, pos[3])/*vec4(sinusodialNoise(pos.xyz, 0.5f, 0.2f), pos[3])*/;
     }
 
+    vec4 modelposition = u_Model * pos;   // Temporarily store the transformed vertex positions for use below
 
-    fs_LightVec = lightPos - pos;  // Compute the direction in which the light source lies
+    fs_LightVec = lightPos - modelposition;  // Compute the direction in which the light source lies
 
-    gl_Position = u_ViewProj * pos;// gl_Position is a built-in variable of OpenGL which is
+    gl_Position = u_ViewProj * modelposition;// gl_Position is a built-in variable of OpenGL which is
                                              // used to render the final positions of the geometry's vertices
                                              
 
