@@ -1,11 +1,17 @@
 # [Project 1: Noise](https://github.com/CIS-566-Fall-2022/hw01-fireball-base)
 
+<p align="center"> 
+  <img src = "https://github.com/thumun/hw01-fireball/blob/master/Screenshot%202024-09-23%20224330.png?raw=true" />
+  A little fireball dancing away on a water-like planet 
+
+</p>
+
 # Project Details 
 This project implements the following:
 
 Shaders: 
 
-- a vertex shader uses two noise functions; the noise function created with the help of sine functions adds bumps to the surface of the fireball and moves the flames around, and the other noise function creates the flame tendrils 
+- a vertex shader uses two noise functions; the noise function created with the help of sine functions adds bumps to the surface of the fireball and moves the flames around, and the other noise function (fbm with worley) creates the flame tendrils 
 - a fragment shader that changes color based on the displacement and adds a noise texture on top of it for an additional 'firey' effect
   
 4 toolbox functions: 
@@ -19,7 +25,12 @@ Shaders:
 Additional interactivity: 
 
 - you can choose which colors to mix for the fireball
+- you can change the octaves for the fbm noise (this effects the flame tendrils) 
 - you can also choose the color of the noise "planet"
+
+Extra spice: 
+
+- the background was slightly changed to have a "planet" 
 
 Link to live demo! https://thumun.github.io/hw01-fireball/
 
