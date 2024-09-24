@@ -95,7 +95,6 @@ void main()
             newColor = vec3(1.0f, 1.0f, 1.0f);
         }
         */
-
         float normalizedDistance = clamp(fs_Pos.y, 0.0, 1.0);
         newColor = (1.0f-fs_Pos.z)*outColor.rgb + fs_Pos.z*centerColor.rgb;
 
