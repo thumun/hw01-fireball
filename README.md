@@ -1,9 +1,8 @@
 # [Project 1: Noise](https://github.com/CIS-566-Fall-2022/hw01-fireball-base)
 
 <p align="center"> 
-  <img src = "https://github.com/thumun/hw01-fireball/blob/master/Screenshot%202024-09-23%20224330.png?raw=true" />
-  A little fireball dancing away on a water-like planet 
-
+  <img src = "https://github.com/thumun/hw01-fireball/blob/master/ezgif-5-b5605c6ef3.gif?raw=true" />
+   A little fireball dancing away on a water-like planet 
 </p>
 
 # Project Details 
@@ -33,6 +32,10 @@ Extra spice:
 - the background was slightly changed to have a "planet" 
 
 Link to live demo! https://thumun.github.io/hw01-fireball/
+
+<p align="center"> 
+  <img src = "https://github.com/thumun/hw01-fireball/blob/master/Screenshot%202024-09-23%20224330.png?raw=true" />
+</p>
 
 ## Objective
 
