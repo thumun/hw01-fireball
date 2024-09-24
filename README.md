@@ -2,6 +2,7 @@
 
 <p align="center"> 
   <img src = "https://github.com/thumun/hw01-fireball/blob/master/ezgif-5-b5605c6ef3.gif?raw=true" />
+  
    A little fireball dancing away on a water-like planet 
 </p>
 
