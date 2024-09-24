@@ -1,5 +1,28 @@
 # [Project 1: Noise](https://github.com/CIS-566-Fall-2022/hw01-fireball-base)
 
+# Project Details 
+This project implements the following:
+
+Shaders: 
+
+- a vertex shader uses two noise functions; the noise function created with the help of sine functions adds bumps to the surface of the fireball and moves the flames around, and the other noise function creates the flame tendrils 
+- a fragment shader that changes color based on the displacement and adds a noise texture on top of it for an additional 'firey' effect
+  
+4 toolbox functions: 
+
+- ease in - for the fire movement 
+- ease out - for the fire movement 
+- smoothstep - makes the color more fun at the top of the fireball
+- sine - for the worley noise (I tried using other wave functions, but sine yielded the best result)
+- (impulse was also used but the effect was not noticeable)
+
+Additional interactivity: 
+
+- you can choose which colors to mix for the fireball
+- you can also choose the color of the noise "planet"
+
+Link to live demo! https://thumun.github.io/hw01-fireball/
+
 ## Objective
 
 Get comfortable with using WebGL and its shaders to generate an interesting 3D, continuous surface using a multi-octave noise algorithm.
