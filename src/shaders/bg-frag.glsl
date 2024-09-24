@@ -13,7 +13,7 @@ uniform float u_DeltaTime;
 
 // These are the interpolated values out of the rasterizer, so you can't know
 // their specific values without knowing the vertices that contributed to them
-//in vec4 fs_Pos;
+in vec4 fs_Pos;
 //in vec4 fs_Nor;
 //in vec4 fs_LightVec;
 //in vec4 fs_Col;
@@ -32,7 +32,7 @@ vec3 random(vec3 p) {
 
 // used 4600 lec slides as ref 
 // and used this: https://www.youtube.com/watch?v=4066MndcyCk 
-float computeWorleyNoise(vec3 currPos)
+float computeWorleyNoise(vec3 currPos, float time)
 {
     vec3 posInt = floor(currPos);
     vec3 posFract = fract(currPos); 
@@ -43,7 +43,7 @@ float computeWorleyNoise(vec3 currPos)
             for (int x = -1; x <= 1; x++){
                 vec3 neighbor = vec3(float(x), float(y), float(z)); // dir of neighbor 
                 vec3 point = random(posInt + neighbor); // gets voronoi point in neighboring cell 
-                point = 0.5 + 0.5*sin(u_DeltaTime + 6.2831*point);
+                point = 0.5 + 0.5*sin(time + 6.2831*point);
                 vec3 diff = neighbor + point - posFract; // gets distance of point and currPos
                 float dist = length(diff); 
                 minDist = min(minDist, dist); // updates min if new min reached 
@@ -56,36 +56,16 @@ float computeWorleyNoise(vec3 currPos)
 
 // borrowed code!
 // https://gist.github.com/patriciogonzalezvivo/670c22f3966e662d2f83
-float fbm(vec3 x, int octaves) {
+float fbm(vec3 x, int octaves, float time) {
 	float v = 0.0f;
 	float a = 0.5f;
 	vec3 shift = vec3(100);
 	for (int i = 0; i < octaves; ++i) {
-		v += a * computeWorleyNoise(x);
+		v += a * computeWorleyNoise(x, time);
 		x = x * 2.0 + shift;
 		a *= 0.5;
 	}
 	return v;
-}
-
-float ease_in_quadratic(float t)
-{
-    return t * t; 
-}
-
-float ease_in_out_quadratic(float t){
-    return 1 - ease_in_quadratic(1 - t);
-}
-
-float ease_in_out_quadratic(float t)
-{
-    if (t < 0.5)
-    {
-        return ease_in_quadratic(1.0f - t);
-    }
-    else {
-        return 1 - ease_in_quadratic((1.0f - t) * 2.0f / 2.0f);
-    }
 }
 
 void main()
@@ -105,7 +85,7 @@ void main()
                                                             //lit by our point light are not completely black.
 
         //float dist = computeWorleyNoise(vec3(fs_Pos[0], fs_Pos[1], fs_Pos[2])); // adjusts the color to create noise effect 
-        //float dist = fbm(fs_Pos.xyz, 8) /** clamp(sin(u_DeltaTime), 0.f, 1.f)*/;
+        float dist = fbm(fs_Pos.xyz, 8, u_DeltaTime) /** clamp(sin(u_DeltaTime), 0.f, 1.f)*/;
 
         //vec3 color = diffuseColor.rgb * lightIntensity; 
 
@@ -126,7 +106,9 @@ void main()
         //    newColor = vec3(0.0f, 0.0f, 0.0f);
         //} 
 
-        out_Col = vec4(diffuseColor.rgb, diffuseColor.a);
+        //vec3 white = vec3(1.0, 1.0, 1.0);
+
+        out_Col = vec4(diffuseColor.rgb * dist, diffuseColor.a);
 
         //out_Col = vec4(newColor, diffuseColor.a);
 

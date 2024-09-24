@@ -18,6 +18,7 @@ const controls = {
   'Reset Scene': resetScene,
   color : [6.0, 6.0, 23.0, 1.0],
   color2 : [165.0, 48.0, 48.0, 1.0],
+  worldColor : [74.0,189.0,255.0,1.0],
 };
 
 /*
@@ -40,6 +41,7 @@ let prevTesselations: number = 5;
 let prevOctaves: number = 8;
 let prevColor: number[] = [6.0, 6.0, 23.0, 1.0];
 let prevColor2: number[] = [165.0, 48.0, 48.0, 1.0];
+let prevWorldColor: number[] = [74.0,189.0,255.0,1.0];
 
 function loadScene() {
   icosphere = new Icosphere(vec3.fromValues(0, 0, 0), 1, controls.tesselations);
@@ -57,6 +59,7 @@ function resetScene(){
   controls.octaves = 8;
   controls.color = [6.0, 6.0, 23.0, 1.0];
   controls.color2 = [165.0, 48.0, 48.0, 1.0];
+  controls.worldColor = [74.0,189.0,255.0,1.0];
   deltaTime = 0.0;
 }
 
@@ -81,6 +84,7 @@ function main() {
   gui.add(controls, 'octaves');
   gui.addColor(controls, 'color');
   gui.addColor(controls, 'color2');
+  gui.addColor(controls, 'worldColor');
 
   //const colorFolder = gui.addFolder("Color");
   //const color = colorFolder.addColor(testObj, 'color');
@@ -104,7 +108,7 @@ function main() {
   const camera = new Camera(vec3.fromValues(0, 0, 5), vec3.fromValues(0, 0, 0));
 
   const renderer = new OpenGLRenderer(canvas);
-  renderer.setClearColor(0.2, 0.2, 0.2, 1);
+  renderer.setClearColor(0.0, 0.0, 0.0, 1);
   gl.enable(gl.DEPTH_TEST);
 
   const lambert = new ShaderProgram([
@@ -123,8 +127,8 @@ function main() {
   ]);
 
   const bg = new ShaderProgram([
-    new Shader(gl.VERTEX_SHADER, require('./shaders/fire-vert.glsl')),
-    new Shader(gl.FRAGMENT_SHADER, require('./shaders/fire-frag.glsl')),
+    new Shader(gl.VERTEX_SHADER, require('./shaders/bg-vert.glsl')),
+    new Shader(gl.FRAGMENT_SHADER, require('./shaders/bg-frag.glsl')),
   ]);
 
   // This function will be called every frame
@@ -156,7 +160,12 @@ function main() {
       prevColor2 = controls.color2;
     }
 
-    renderer.render(camera, bg, 0, controls.color, [], 0, [
+    if(controls.worldColor != prevWorldColor)
+    {
+      prevWorldColor = controls.worldColor;
+    }
+
+    renderer.render(camera, bg, 0, controls.worldColor, [], deltaTime, [
       icosphere2,
       //square
       ]);
