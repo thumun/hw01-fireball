@@ -21,6 +21,32 @@ in vec4 fs_Pos;
 out vec4 out_Col; // This is the final output color that you will see on your
                   // screen for the pixel that is currently being processed.
 
+// borrowed from lec slides 
+
+float impulse ( float k, float x)
+{
+    float h = k * x; 
+    return h * exp(1.0f - h);
+}
+
+float bias(float b, float t){
+    return pow(t, log(b) / log(0.5f));
+}
+
+float gain (float g, float t){
+    if (t < 0.5f){
+        return bias(1.0f-g, 2.0*t) / 2.0f; 
+    }
+    else {
+        return 1.0f - bias(1.0f-g, 2.0f - 2.0f*t);
+    }
+}
+
+float sawtooth_wave(float x, float freq, float amplitude)
+{
+    return (x * freq - floor(x * freq)) * amplitude;
+}
+
 // got the values from here https://lygia.xyz/generative/srandom and 4600 slides 
 vec3 random(vec3 p) {
     p = (vec3(dot(p, vec3(127.1, 311.7,70.0)),
@@ -44,6 +70,8 @@ float computeWorleyNoise(vec3 currPos, float time)
                 vec3 neighbor = vec3(float(x), float(y), float(z)); // dir of neighbor 
                 vec3 point = random(posInt + neighbor); // gets voronoi point in neighboring cell 
                 point = 0.5 + 0.5*sin(time + 6.2831*point);
+                //point += 0.5 + sawtooth_wave(time, 5.0f, 1.0f) /*+ 0.5*sin(time + 6.2831*point) + 6.2831*point*/;
+                //point.z = impulse(point.z, time);
                 vec3 diff = neighbor + point - posFract; // gets distance of point and currPos
                 float dist = length(diff); 
                 minDist = min(minDist, dist); // updates min if new min reached 
@@ -68,6 +96,7 @@ float fbm(vec3 x, int octaves, float time) {
 	return v;
 }
 
+
 void main()
 {
     // Material base color (before shading)
@@ -86,29 +115,11 @@ void main()
 
         //float dist = computeWorleyNoise(vec3(fs_Pos[0], fs_Pos[1], fs_Pos[2])); // adjusts the color to create noise effect 
         float dist = fbm(fs_Pos.xyz, 8, u_DeltaTime) /** clamp(sin(u_DeltaTime), 0.f, 1.f)*/;
+        float dist2 = fbm(fs_Pos.xyz, 3, u_DeltaTime);
 
-        //vec3 color = diffuseColor.rgb * lightIntensity; 
+        float impulseVal = impulse(dist, dist2);
 
-        // Compute final shaded color
-
-        //float zdist = length(fs_Pos.xyz);
-        //vec3 newColor = (1.0f-zdist)*diffuseColor.rgb + zdist*vec3(1.f, 1.f, 1.f);
-
-        //vec4 newColor = vec4(diffuseColor.rgb * dist, 0.3f);
-
-        //float noiseVal = fbm(fs_Pos.xyz, 8);
-        //float clampNoise = clamp(noiseVal, 0.0f, 1.0f);
-
-        //vec3 newColor = vec3(1.0f, 1.0f, 1.0f);
-
-        //if (clampNoise > 0.3f)
-        //{
-        //    newColor = vec3(0.0f, 0.0f, 0.0f);
-        //} 
-
-        //vec3 white = vec3(1.0, 1.0, 1.0);
-
-        out_Col = vec4(diffuseColor.rgb * dist, diffuseColor.a);
+        out_Col = vec4(diffuseColor.rgb * impulseVal, diffuseColor.a);
 
         //out_Col = vec4(newColor, diffuseColor.a);
 

@@ -106,7 +106,11 @@ void main()
         //vec4 tempTest = vec4(newColor[0], newColor[1], newColor[2], 0.3f);
 
         //newColor = mix(vec4(newColor.rgb, outColor.a), tempTest*fbmval, fbmval);
-        newColor = mix(newColor, newColor*fbmval, fbmval);
+        float r = smoothstep(newColor.r, newColor.r*fbmval, 0.1f);
+        float g = smoothstep(newColor.g, newColor.g*fbmval, 0.5f);
+        float b = smoothstep(newColor.b, newColor.b*fbmval, 0.1f);
+
+        newColor = mix(newColor.rgb, vec3(r, g, b), fbmval);
 
         //out_Col = vec4(diffuseColor.rgb * dist, diffuseColor.a);
 

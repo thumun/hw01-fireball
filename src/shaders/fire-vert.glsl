@@ -128,8 +128,6 @@ float smoothstep(float edge0, float edge1, float x){
 */
 
 
-// need to add 3 more 
-
 void main()
 {
     fs_Col = vs_Col;                         // Pass the vertex colors to the fragment shader for interpolation
@@ -189,6 +187,7 @@ void main()
     {
         // to make the long flames -- high freq, low amplitude 
         pos[2] = pos[2] * fbmVal * 3.0f; 
+        //pos[2] = smoothstep(pos[2], pos[2] * fbmVal * 3.0f + pos[2], pos[2] * fbmVal * 3.0f);
 
         // adding a slight bit of movement -> borrowed from last homework 
         // ease in/ease out - makes it wobble/pulse 

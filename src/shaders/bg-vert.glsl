@@ -112,7 +112,11 @@ void main()
                                                             // the model matrix.
 
     vec4 pos = vs_Pos; 
-    
+
+    //vec3 dir = vec3(0.0, 1.0, 0.0);
+    //float dotProd = dot(fs_Nor.xyz, dir);
+    //pos = vec4(pos.x, pos.y, -0.2f * sin(u_DeltaTime*20.0f * pos.z*dotProd) + clamp(pos.z*sin(u_DeltaTime * dotProd), 0.f, 1.0f), pos[3]);
+
     vec4 modelposition = u_Model * pos;   // Temporarily store the transformed vertex positions for use below
 
     fs_LightVec = lightPos - modelposition;  // Compute the direction in which the light source lies
