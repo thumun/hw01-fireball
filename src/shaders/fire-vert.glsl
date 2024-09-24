@@ -66,6 +66,10 @@ float computeWorleyNoise(vec3 currPos)
 
 // borrowed code!
 // https://gist.github.com/patriciogonzalezvivo/670c22f3966e662d2f83
+
+// parameterize amplitude --> expose to outside 
+// test !! 
+
 float fbm(vec3 x, int octaves) {
 	float v = 0.0f;
 	float a = 0.5f;
@@ -86,20 +90,36 @@ vec3 sinusodialNoise(vec3 pos, float amp, float freq)
 }
 
 // toolbox funcs from lec slides!
-/*
+
+float ease_in_quadratic(float t)
+{
+    return t * t; 
+}
+
+float ease_in_out_quadratic(float t)
+{
+    if (t < 0.5)
+    {
+        return ease_in_quadratic(1.0f - t);
+    }
+    else {
+        return 1.0 - ease_in_quadratic((1.0f - t) * 2.0f / 2.0f);
+    }
+}
+
 float bias(float b, float t){
     return pow(t, log(b) / log(0.5f));
 }
 
 float gain (float g, float t){
     if (t < 0.5f){
-        return bias(1.0f-g, 2*t) / 2.0f; 
+        return bias(1.0f-g, 2.0*t) / 2.0f; 
     }
     else {
         return 1.0f - bias(1.0f-g, 2.0f - 2.0f*t);
     }
 }
-*/
+
 
 // need to add 3 more 
 
@@ -160,10 +180,14 @@ void main()
     // only affects the top of the sphere --> so flames concentrated on top 
     if (pos.z > 0.f)
     {
-        // to make the long flames
+        // to make the long flames -- high freq, low amplitude 
         pos[2] = pos[2] * fbmVal * 3.0f; 
+
         // adding a slight bit of movement -> borrowed from last homework 
-        pos[0] = pos[0] + 0.1 * sin(3.14 * u_DeltaTime + pos[0]); // moving the verticies based on sin & time
+        // ease in/ease out - makes it wobble/pulse 
+        // high freq, low amplitude to make bumps  
+        pos[0] = pos[0] + 0.1 * sin(3.14 * ease_in_out_quadratic(u_DeltaTime * 0.1f) + pos[0]); // moving the verticies based on sin & time
+        pos[1] = pos[1] + 0.1 * sin(3.14 * ease_in_out_quadratic(u_DeltaTime * 0.1f) + pos[1]); // moving the verticies based on sin & time
 
     } 
 

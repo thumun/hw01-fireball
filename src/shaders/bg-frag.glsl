@@ -116,17 +116,17 @@ void main()
 
         //vec4 newColor = vec4(diffuseColor.rgb * dist, 0.3f);
 
-        float noiseVal = fbm(fs_Pos.xyz, 8);
-        float clampNoise = clamp(noiseVal, 0.0f, 1.0f);
+        //float noiseVal = fbm(fs_Pos.xyz, 8);
+        //float clampNoise = clamp(noiseVal, 0.0f, 1.0f);
 
-        vec3 newColor = vec3(1.0f, 1.0f, 1.0f);
+        //vec3 newColor = vec3(1.0f, 1.0f, 1.0f);
 
-        if (clampNoise > 0.3f)
-        {
-            newColor = vec3(0.0f, 0.0f, 0.0f);
-        } 
+        //if (clampNoise > 0.3f)
+        //{
+        //    newColor = vec3(0.0f, 0.0f, 0.0f);
+        //} 
 
-        out_Col = vec4(newColor, diffuseColor.a);
+        out_Col = vec4(diffuseColor.rgb, diffuseColor.a);
 
         //out_Col = vec4(newColor, diffuseColor.a);
 

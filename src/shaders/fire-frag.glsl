@@ -76,20 +76,8 @@ void main()
         vec4 outColor = u_Color;
         vec4 centerColor = u_Color2;
 
-
-        // Calculate the diffuse term for Lambert shading
-        //float diffuseTerm = dot(normalize(fs_Nor), normalize(fs_LightVec));
-        // Avoid negative lighting values
-        //diffuseTerm = clamp(diffuseTerm, 0, 1);
-
-        //float ambientTerm = 0.2;
-
-        //float lightIntensity = diffuseTerm + ambientTerm;   //Add a small float value to the color multiplier
-                                                            //to simulate ambient lighting. This ensures that faces that are not
-                                                            //lit by our point light are not completely black.
-
+        
         //float dist = computeWorleyNoise(vec3(fs_Pos[0], fs_Pos[1], fs_Pos[2])); // adjusts the color to create noise effect 
-        //float dist = fbm(fs_Pos.xyz, 8) /** clamp(sin(u_DeltaTime), 0.f, 1.f)*/;
 
         //vec3 color = diffuseColor.rgb * lightIntensity; 
 
@@ -100,7 +88,7 @@ void main()
 
         vec3 newColor = vec3(0.f, 0.f, 0.f);
 
-        float dist = length(fs_Pos.z);
+        //float dist = length(fs_Pos.z);
         /*
         if(dist <= 1.0f)
         {
@@ -111,9 +99,15 @@ void main()
         float normalizedDistance = clamp(fs_Pos.y, 0.0, 1.0);
         newColor = (1.0f-fs_Pos.z)*outColor.rgb + fs_Pos.z*centerColor.rgb;
 
+        float fbmval = fbm(fs_Pos.xyz, 8) /** clamp(sin(u_DeltaTime), 0.f, 1.f)*/;
 
-        // Interpolate between centerColor and edgeColor based on normalizedDistance
+        // mixing based on dist
         vec3 color = mix(outColor.rgb, centerColor.rgb, normalizedDistance);
+
+        //vec4 tempTest = vec4(newColor[0], newColor[1], newColor[2], 0.3f);
+
+        //newColor = mix(vec4(newColor.rgb, outColor.a), tempTest*fbmval, fbmval);
+        newColor = mix(newColor, newColor*fbmval, fbmval);
 
         //out_Col = vec4(diffuseColor.rgb * dist, diffuseColor.a);
 

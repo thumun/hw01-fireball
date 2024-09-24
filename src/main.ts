@@ -32,6 +32,7 @@ class test {
 let deltaTime: number = 0.0; 
 
 let icosphere: Icosphere;
+let icosphere2: Icosphere;
 let square: Square;
 let cube: Cube;
 
@@ -43,6 +44,8 @@ let prevColor2: number[] = [165.0, 48.0, 48.0, 1.0];
 function loadScene() {
   icosphere = new Icosphere(vec3.fromValues(0, 0, 0), 1, controls.tesselations);
   icosphere.create();
+  icosphere2 = new Icosphere(vec3.fromValues(0, 0, -20), 20, 5);
+  icosphere2.create();
   square = new Square(vec3.fromValues(0, 0, 0));
   square.create();
   cube = new Cube(vec3.fromValues(0, 0, 0));
@@ -54,6 +57,7 @@ function resetScene(){
   controls.octaves = 8;
   controls.color = [6.0, 6.0, 23.0, 1.0];
   controls.color2 = [165.0, 48.0, 48.0, 1.0];
+  deltaTime = 0.0;
 }
 
 function main() {
@@ -152,9 +156,9 @@ function main() {
       prevColor2 = controls.color2;
     }
 
-    renderer.render(camera, bg, 0, [], [], 0, [
-      //icosphere,
-      square
+    renderer.render(camera, bg, 0, controls.color, [], 0, [
+      icosphere2,
+      //square
       ]);
 
     renderer.render(camera, fire, controls.octaves, controls.color, controls.color2, deltaTime,[
